@@ -3,8 +3,11 @@
     "name": "liftrics",
     "slug": "liftrics",
     "privacy": "public",
-    "sdkVersion": "32.0.0",
-    "platforms": ["ios", "android"],
+    "sdkVersion": "48.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -17,12 +20,23 @@
       "package": "com.liftrics.liftricsapp"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/af8f2670-5bc5-11e9-b3a6-67a7550b6b8b"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.liftrics.liftricsapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "af8f2670-5bc5-11e9-b3a6-67a7550b6b8b"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }
