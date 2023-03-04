@@ -1,5 +1,5 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import thunkMiddleware from "redux-thunk";
+import { createStore, combineReducers, applyMiddleware, Store } from "redux";
+import thunkMiddleware, { ThunkMiddleware } from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import authReducer from "./reducers/auth";
 import uiReducer from "./reducers/ui";
@@ -15,8 +15,10 @@ const rootReducer = combineReducers({
   chats: chatReducer
 });
 
-const configureStore = () => {
-  return createStore(rootReducer, undefined, composeWithDevTools(applyMiddleware(thunkMiddleware)));
+const middleware = [thunkMiddleware as ThunkMiddleware];
+
+const configureStore = (): Store => {
+  return createStore(rootReducer, undefined, composeWithDevTools(applyMiddleware(...middleware)));
 };
 
 export default configureStore;

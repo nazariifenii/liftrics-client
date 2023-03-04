@@ -1,10 +1,16 @@
 import React from "react";
-import { TouchableHighlight, Text, View, StyleSheet } from "react-native";
+import { ViewStyle, Text, View, StyleSheet } from "react-native";
 
 import { Colors, Fonts } from "../constants";
 import ListItemSeparator from "./ListItemSeparator";
-const SectionHeader = ({ title, containerStyle }) => (
-  <View style={[styles.containerStyle, containerStyle]}>
+
+type Props = {
+  title: string;
+  containerStyle: ViewStyle;
+};
+
+const SectionHeader: React.FC<Props> = ({ title, containerStyle }) => (
+  <View style={containerStyle}>
     <Text style={styles.titleStyle}>{title}</Text>
     <ListItemSeparator />
   </View>
@@ -16,8 +22,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.avenir,
     color: Colors.mainTextColor,
     marginBottom: 2,
-    fontSize: 17
-  }
+    fontSize: 17,
+  },
 });
 
 export default SectionHeader;

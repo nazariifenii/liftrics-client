@@ -14,5 +14,6 @@ export default {
   mainTextColor: "#354052",
   separatorColor: "#979797",
   disabledTextColour: "#A0A0A0",
-  selectedItemColor: "#4C6BAB"
+  selectedItemColor: "#4C6BAB",
+  black: "#000"
 };

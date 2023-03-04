@@ -1,15 +1,18 @@
 import React from "react";
-import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
-import { Avatar, Rating, Button } from "react-native-elements";
+import { Text, StyleSheet, View } from "react-native";
+import { Avatar } from "react-native-elements";
 
 import { Colors, Fonts } from "../constants";
 import ListItemSeparator from "./ListItemSeparator";
 
-const ChatRow = ({
-  userId,
+type Props = {
+  userName: string;
+  imageUrl: string;
+};
+
+const ChatRow: React.FC<Props> = ({
   userName,
   imageUrl = "http://liftrics.herokuapp.com/users/5ce0598130f17600160a23a7/profile-pic",
-  navigation
 }) => {
   return (
     <>
@@ -18,13 +21,9 @@ const ChatRow = ({
           <View style={styles.row}>
             <Avatar
               rounded
-              source={
-                imageUrl
-                  ? {
-                      uri: imageUrl
-                    }
-                  : { name: "user", type: "font-awesome" }
-              }
+              source={{
+                uri: imageUrl,
+              }}
               size="medium"
             />
             <View style={styles.nameContainer}>
@@ -45,28 +44,28 @@ export default ChatRow;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16
+    margin: 16,
   },
   mainRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   row: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   nameText: {
     fontSize: 19,
     fontFamily: Fonts.avenir,
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   nameContainer: {
     justifyContent: "space-between",
-    marginLeft: 5
+    marginLeft: 5,
   },
   tapToStart: {
     fontSize: 15,
     fontFamily: Fonts.avenir,
-    color: Colors.disabledTextColour
-  }
+    color: Colors.disabledTextColour,
+  },
 });

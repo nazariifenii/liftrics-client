@@ -1,14 +1,14 @@
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 
 import MainTabNavigator from "./MainTabNavigator";
 import AuthStackScreen from "./AuthNavigator";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => (
-  <NavigationContainer headerMode="none">
-    <Stack.Navigator initialRouteName="Auth">
+  <NavigationContainer>
+    <Stack.Navigator>
       <Stack.Screen
         name="Auth"
         component={AuthStackScreen}

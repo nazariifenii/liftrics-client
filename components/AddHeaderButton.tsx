@@ -1,16 +1,19 @@
 import React from "react";
 import { Platform, TouchableOpacity } from "react-native";
-import { Icon } from "expo";
-
+import { Ionicons } from '@expo/vector-icons';
 import Colors from "../constants/Colors";
 
-const AddHeaderButton = ({ onPress }) => {
+type Props = {
+  onPress: () => void;
+};
+
+const AddHeaderButton: React.FC<Props> = ({ onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Icon.Ionicons
+      <Ionicons
         name={Platform.OS === "ios" ? `ios-add` : "md-add"}
         size={35}
-        color={"black"}
+        color={Colors.black}
         style={{ marginHorizontal: 16 }}
       />
     </TouchableOpacity>

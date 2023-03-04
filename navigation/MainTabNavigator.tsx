@@ -1,6 +1,5 @@
-import React from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
@@ -17,9 +16,9 @@ import FilterAllDeliveriesScreen from "../screens/AllDeliveriesScreen/FilterAllD
 import ChatListScreen from "../screens/ChatListScreen";
 import ConversationScreen from "../screens/ChatListScreen/ConversationScreen";
 
-const MyDeliveriesStack = createStackNavigator();
-const AllDeliveriesStack = createStackNavigator();
-const ChatStack = createStackNavigator();
+const MyDeliveriesStack = createNativeStackNavigator();
+const AllDeliveriesStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
@@ -74,7 +73,7 @@ const ChatStackScreen = () => (
 );
 
 
-export default MainTabNavigator = () => (
+const MainTabNavigator = () => (
   <Tab.Navigator>
     <Tab.Screen
       name="AllDeliveriesStack"
@@ -130,3 +129,5 @@ export default MainTabNavigator = () => (
     />
   </Tab.Navigator>
 );
+
+export default MainTabNavigator;

@@ -1,21 +1,29 @@
 import React from "react";
-import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import { Avatar, Rating, Button } from "react-native-elements";
 
 import { Colors, Fonts } from "../constants";
 import ListItemSeparator from "./ListItemSeparator";
 
-const ApplicantRow = ({
+type Props = {
+  userId: string;
+  userName: string;
+  imageUrl: string;
+  userRating: number;
+  onPress?: (userId: string) => void;
+};
+
+const ApplicantRow: React.FC<Props> = ({
   userId,
   userName,
   imageUrl,
   userRating = 0,
-  navigation,
-  onPress
+  onPress,
 }) => {
   const onSubmitPress = () => {
-    onPress(userId);
+    onPress && onPress(userId);
   };
+
   return (
     <>
       <View style={styles.container}>
@@ -23,13 +31,9 @@ const ApplicantRow = ({
           <View style={styles.row}>
             <Avatar
               rounded
-              source={
-                imageUrl
-                  ? {
-                      uri: imageUrl
-                    }
-                  : { name: "user", type: "font-awesome" }
-              }
+              source={{
+                uri: imageUrl,
+              }}
               size="medium"
             />
             <View style={styles.nameRatingContainer}>
@@ -57,42 +61,42 @@ const ApplicantRow = ({
   );
 };
 
-export default ApplicantRow;
-
 const styles = StyleSheet.create({
   container: {
-    margin: 16
+    margin: 16,
   },
   mainRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   row: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   nameText: {
     fontSize: 19,
     fontFamily: Fonts.avenir,
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   raitingContainer: {
     flexDirection: "row",
-    alignContent: "center"
+    alignContent: "center",
   },
   ratingTitle: {
     fontFamily: Fonts.avenir,
     color: Colors.mainTextColor,
     marginLeft: 5,
-    fontSize: 13
+    fontSize: 13,
   },
   nameRatingContainer: {
     justifyContent: "space-between",
-    marginLeft: 5
+    marginLeft: 5,
   },
   buttonTitleStyle: { fontSize: 12 },
   submitButton: {
     height: 35,
-    width: 90
-  }
+    width: 90,
+  },
 });
+
+export default ApplicantRow;

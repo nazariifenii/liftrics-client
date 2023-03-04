@@ -1,15 +1,18 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { ListItem } from "react-native-elements";
 import { CheckBox } from "react-native-elements";
 
-const CheckBoxItem = ({ title, checked, onPress }) => {
-  onItemPress = () => {
-    onPress(title);
-  };
-  return <CheckBox title={title} checked={checked} onPress={onItemPress} />;
+type Props = {
+  title: string;
+  checked: boolean;
+  onPress: (title: string) => void;
 };
 
-const styles = StyleSheet.create({});
+const CheckBoxItem: React.FC<Props> = ({ title, checked, onPress }) => {
+  const onItemPress = () => {
+    onPress(title);
+  };
+
+  return <CheckBox title={title} checked={checked} onPress={onItemPress} />;
+};
 
 export default CheckBoxItem;

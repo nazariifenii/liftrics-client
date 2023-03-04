@@ -4,24 +4,36 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  View
+  View,
 } from "react-native";
-import { Icon } from "expo";
+import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../constants/Colors";
 
-const ListItemHorizontal = ({ id, title, image, selected, onPress }) => {
+type Props = {
+  id: string;
+  title: string;
+  image: string;
+  selected: boolean;
+  onPress: (id: string) => void;
+};
+
+const ListItemHorizontal: React.FC<Props> = ({
+  id,
+  title,
+  image,
+  selected,
+  onPress,
+}) => {
   const onItemPress = () => {
-    if (onPress) {
-      onPress(id);
-    }
+   onPress && onPress(id);
   };
 
   return (
     <TouchableOpacity onPress={onItemPress}>
       <View style={styles.container}>
         {image && (
-          <Icon.Ionicons
+          <Ionicons
             name={Platform.OS === "ios" ? `ios-${image}` : `md-${image}`}
             size={35}
             color={selected ? Colors.tintColor : Colors.mainTextColor}
@@ -41,14 +53,13 @@ const styles = StyleSheet.create({
   container: {
     width: 55,
     alignItems: "center",
-    paddingTop: 10
+    paddingTop: 10,
   },
   itemTitle: {
     textAlign: "center",
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   selectedText: {
-    color: "blue",
-    color: Colors.tintColor
-  }
+    color: Colors.tintColor,
+  },
 });

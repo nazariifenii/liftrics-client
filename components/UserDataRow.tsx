@@ -5,7 +5,17 @@ import { Avatar, Rating } from "react-native-elements";
 import { Colors, Fonts } from "../constants";
 import ListItemSeparator from "./ListItemSeparator";
 
-const UserDataRow = ({ userName, imageUrl, userRating = 0, navigation }) => {
+type Props = {
+  userName: string;
+  imageUrl: string;
+  userRating: number;
+};
+
+const UserDataRow: React.FC<Props> = ({
+  userName,
+  imageUrl,
+  userRating = 0,
+}) => {
   return (
     <>
       <View style={styles.container}>
@@ -19,17 +29,7 @@ const UserDataRow = ({ userName, imageUrl, userRating = 0, navigation }) => {
               </Text>
             </View>
           </View>
-          <Avatar
-            rounded
-            source={
-              imageUrl
-                ? {
-                    uri: imageUrl
-                  }
-                : { name: "user", type: "font-awesome" }
-            }
-            size="medium"
-          />
+          <Avatar rounded source={{ uri: imageUrl }} size="medium" />
         </View>
       </View>
       <ListItemSeparator />
@@ -37,32 +37,32 @@ const UserDataRow = ({ userName, imageUrl, userRating = 0, navigation }) => {
   );
 };
 
-export default UserDataRow;
-
 const styles = StyleSheet.create({
   container: {
-    margin: 16
+    margin: 16,
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   nameText: {
     fontSize: 19,
     fontFamily: Fonts.avenir,
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   raitingContainer: {
     flexDirection: "row",
-    alignContent: "center"
+    alignContent: "center",
   },
   ratingTitle: {
     fontFamily: Fonts.avenir,
     color: Colors.mainTextColor,
     marginLeft: 5,
-    fontSize: 13
+    fontSize: 13,
   },
   nameRatingContainer: {
-    justifyContent: "space-between"
-  }
+    justifyContent: "space-between",
+  },
 });
+
+export default UserDataRow;
