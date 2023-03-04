@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "react-navigation-stack";
-import { createBottomTabNavigator } from "react-navigation-tabs"
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
 import MyDeliveriesScreen from "../screens/MyDeliveriesScreen";
@@ -17,73 +17,116 @@ import FilterAllDeliveriesScreen from "../screens/AllDeliveriesScreen/FilterAllD
 import ChatListScreen from "../screens/ChatListScreen";
 import ConversationScreen from "../screens/ChatListScreen/ConversationScreen";
 
-const MyDeliveriesStack = createStackNavigator({
-  MyDeliveries: MyDeliveriesScreen,
-  DeliveryDetails: DeliveryDetailsScreen,
-  ApplicantsList: ApplicantsListScreen
-});
+const MyDeliveriesStack = createStackNavigator();
+const AllDeliveriesStack = createStackNavigator();
+const ChatStack = createStackNavigator();
 
-MyDeliveriesStack.navigationOptions = {
-  tabBarLabel: "Мої доставки",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? `ios-filing` : "md-filing"}
+const Tab = createBottomTabNavigator();
+
+const MyDeliveriesStackScreen = () => (
+  <MyDeliveriesStack.Navigator>
+    <MyDeliveriesStack.Screen
+      name="MyDeliveries"
+      component={MyDeliveriesScreen}
     />
-  )
-};
-
-const AllDeliveriesStack = createStackNavigator({
-  AllDeliveries: AllDeliveriesScreen,
-  CreateDelivery: CreateDeliveryScreen,
-  InputData: InputDataScreen,
-  DeliveryDetails: DeliveryDetailsScreen,
-  ApplicantsList: ApplicantsListScreen,
-  FilterAllDeliveries: FilterAllDeliveriesScreen
-});
-
-AllDeliveriesStack.navigationOptions = {
-  tabBarLabel: "Список доставок",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-paper" : "md-paper"}
+    <MyDeliveriesStack.Screen
+      name="DeliveryDetails"
+      component={DeliveryDetailsScreen}
     />
-  )
-};
-
-const ChatStack = createStackNavigator({
-  ChatList: ChatListScreen,
-  ConversationPage: ConversationScreen
-});
-
-ChatStack.navigationOptions = {
-  tabBarLabel: "Чати",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? `ios-chatboxes` : "md-chatboxes"}
+    <MyDeliveriesStack.Screen
+      name="ApplicantsList"
+      component={ApplicantsListScreen}
     />
-  )
-};
+  </MyDeliveriesStack.Navigator>
+);
 
-const ProfileStack = createStackNavigator({
-  Profile: ProfileScreen
-});
-
-ProfileStack.navigationOptions = {
-  tabBarLabel: "Профіль",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-contact" : "md-contact"}
+const AllDeliveriesStackScreen = () => (
+  <AllDeliveriesStack.Navigator>
+    <AllDeliveriesStack.Screen
+      name="AllDeliveries"
+      component={AllDeliveriesScreen}
     />
-  )
-};
+    <AllDeliveriesStack.Screen
+      name="CreateDelivery"
+      component={CreateDeliveryScreen}
+    />
+    <AllDeliveriesStack.Screen name="InputData" component={InputDataScreen} />
+    <AllDeliveriesStack.Screen
+      name="DeliveryDetails"
+      component={DeliveryDetailsScreen}
+    />
+    <AllDeliveriesStack.Screen
+      name="ApplicantsList"
+      component={ApplicantsListScreen}
+    />
+    <AllDeliveriesStack.Screen
+      name="FilterAllDeliveries"
+      component={FilterAllDeliveriesScreen}
+    />
+  </AllDeliveriesStack.Navigator>
+);
 
-export default createBottomTabNavigator({
-  AllDeliveriesStack,
-  ChatStack,
-  MyDeliveriesStack,
-  ProfileStack
-});
+const ChatStackScreen = () => (
+  <ChatStack.Navigator>
+    <ChatStack.Screen name="ChatList" component={ChatListScreen} />
+    <ChatStack.Screen name="ConversationPage" component={ConversationScreen} />
+  </ChatStack.Navigator>
+);
+
+
+export default MainTabNavigator = () => (
+  <Tab.Navigator>
+    <Tab.Screen
+      name="AllDeliveriesStack"
+      component={AllDeliveriesStackScreen}
+      options={{
+        tabBarLabel: "Список доставок",
+        tabBarIcon: ({ focused }) => (
+          <TabBarIcon
+            focused={focused}
+            name={Platform.OS === "ios" ? "ios-paper" : "md-paper"}
+          />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="ChatStack"
+      component={ChatStackScreen}
+      options={{
+        tabBarLabel: "Чати",
+        tabBarIcon: ({ focused }) => (
+          <TabBarIcon
+            focused={focused}
+            name={Platform.OS === "ios" ? `ios-chatboxes` : "md-chatboxes"}
+          />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="MyDeliveriesStack"
+      component={MyDeliveriesStackScreen}
+      options={{
+        tabBarLabel: "Мої доставки",
+        tabBarIcon: ({ focused }) => (
+          <TabBarIcon
+            focused={focused}
+            name={Platform.OS === "ios" ? `ios-filing` : "md-filing"}
+          />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        tabBarLabel: "Профіль",
+        tabBarIcon: ({ focused }) => (
+          <TabBarIcon
+            focused={focused}
+            name={Platform.OS === "ios" ? "ios-contact" : "md-contact"}
+          />
+        ),
+      }}
+    />
+  </Tab.Navigator>
+);
