@@ -11,6 +11,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "1.17.11",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.12.4",
     "expo": "^48.0.0",
@@ -31,9 +32,9 @@
     "react-navigation-drawer": "^1.4.0",
     "react-navigation-stack": "^1.7.3",
     "react-navigation-tabs": "^1.2.0",
-    "react-redux": "^6.0.0",
-    "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0",
+    "react-redux": "^8.0.5",
+    "redux": "^4.2.1",
+    "redux-thunk": "^2.4.2",
     "socket.io-client": "^2.2.0"
   },
   "devDependencies": {

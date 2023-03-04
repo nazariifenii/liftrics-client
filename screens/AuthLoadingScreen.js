@@ -4,8 +4,7 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  StatusBar,
-  AsyncStorage
+  StatusBar
 } from "react-native";
 import { connect } from "react-redux";
 
