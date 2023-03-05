@@ -9,11 +9,11 @@ import {
 import { Input, Avatar } from "react-native-elements";
 import io from "socket.io-client";
 import { Icon } from "expo";
-import { connect } from "react-redux";
 import { Colors } from "../../constants";
 
 import styles from "./styles";
 
+// TODO: Add typesctipt and finish functionality
 class ConversationScreen extends React.Component {
   static navigationOptions = {
     title: "Чати"

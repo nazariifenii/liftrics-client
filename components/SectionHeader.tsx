@@ -6,7 +6,7 @@ import ListItemSeparator from "./ListItemSeparator";
 
 type Props = {
   title: string;
-  containerStyle: ViewStyle;
+  containerStyle?: ViewStyle;
 };
 
 const SectionHeader: React.FC<Props> = ({ title, containerStyle }) => (

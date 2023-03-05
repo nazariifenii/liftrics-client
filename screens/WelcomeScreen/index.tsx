@@ -2,13 +2,19 @@ import React from "react";
 import { Text, View, ActivityIndicator } from "react-native";
 import { Image, Button } from "react-native-elements";
 import styles from "./styles";
-
+import { NavigationProp } from "@react-navigation/native";
+import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 import { authAutoSignIn } from "../../store/actions";
 
-class WelcomeScreen extends React.PureComponent {
+type Props = {
+  navigation: NavigationProp<any, any>;
+  onAutoSignIn: (navigation: NavigationProp<any, any>) => void;
+};
+
+class WelcomeScreen extends React.PureComponent<Props> {
   static navigationOptions = {
-    headerBackTitle: "Назад"
+    headerBackTitle: "Назад",
   };
 
   componentDidMount() {
@@ -55,16 +61,14 @@ class WelcomeScreen extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
-    onAutoSignIn: navigation => dispatch(authAutoSignIn(navigation))
+    onAutoSignIn: (navigation: NavigationProp<any, any>) =>
+      dispatch(authAutoSignIn(navigation)),
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(WelcomeScreen);
+export default connect(null, mapDispatchToProps)(WelcomeScreen);
 
 const deliveryImagePath =
   "https://cdn.dribbble.com/users/1023685/screenshots/2637190/delivery_icon.jpg";

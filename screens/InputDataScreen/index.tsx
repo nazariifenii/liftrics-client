@@ -1,34 +1,39 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { connect } from "react-redux";
 import { Button, Input } from "react-native-elements";
+import { NavigationProp } from "@react-navigation/native";
 
 import styles from "./styles";
 
-class InputDataScreen extends React.Component {
+type Props = {
+  route: any;
+  navigation: NavigationProp<any, any>;
+};
+
+class InputDataScreen extends React.Component<Props> {
   state = {
-    inputValue: this.props.navigation.state.params.inputData
+    inputValue: this.props.route.params.inputData,
   };
 
   static navigationOptions = {
-    headerBackTitle: "Назад"
+    headerBackTitle: "Назад",
   };
 
   onSubmitPress = () => {
     if (this.state.inputValue) {
-      this.props.navigation.state.params.onPress(this.state.inputValue);
+      this.props.route.params.onPress(this.state.inputValue);
     }
     this.props.navigation.goBack();
   };
 
-  onInputValueChange = data => {
+  onInputValueChange = (data: string) => {
     this.setState({
-      inputValue: data
+      inputValue: data,
     });
   };
 
   render() {
-    const { labelTitle, screenTitle } = this.props.navigation.state.params;
+    const { labelTitle, screenTitle } = this.props.route.params;
     return (
       <View style={styles.container}>
         <View>

@@ -1,29 +1,34 @@
-// @flow
-
 import React from "react";
 import { connect } from "react-redux";
-import Icon from "react-native-vector-icons/FontAwesome";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator
-} from "react-native";
+import { View, Text } from "react-native";
 import { Button, Input } from "react-native-elements";
+import { NavigationProp } from "@react-navigation/native";
 
 import { doSignUp } from "../../store/actions/auth";
 import styles from "./styles";
+import { ThunkDispatch } from "redux-thunk";
 
-type Props = {};
+type RegistrationData = {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
+};
 
-class RegisterScreen extends React.Component<Props, void> {
+type Props = {
+  navigation: NavigationProp<any, any>;
+  userToken: string;
+  isLoading: boolean;
+  onRegister: (registrationData: RegistrationData) => void;
+};
+
+class RegisterScreen extends React.Component<Props> {
   state = {
     nameInputValue: "",
     surnameInputValue: "",
     phoneInputValue: "",
     passwordInputValue: "",
-    repeatPasswordInputValue: ""
+    repeatPasswordInputValue: "",
   };
 
   componentDidUpdate() {
@@ -38,43 +43,43 @@ class RegisterScreen extends React.Component<Props, void> {
 
   onRegisterPress = () => {
     if (this.validateInputs()) {
-      const registrationData = {
+      const registrationData: RegistrationData = {
         firstName: this.state.nameInputValue,
         lastName: this.state.surnameInputValue,
         phoneNumber: `+${this.state.phoneInputValue}`,
-        password: this.state.passwordInputValue
+        password: this.state.passwordInputValue,
       };
       this.props.onRegister(registrationData);
     }
   };
 
-  onPhoneChange = phone => {
+  onPhoneChange = (phone: string) => {
     this.setState({
-      phoneInputValue: phone
+      phoneInputValue: phone,
     });
   };
 
-  onPasswordChange = password => {
+  onPasswordChange = (password: string) => {
     this.setState({
-      passwordInputValue: password
+      passwordInputValue: password,
     });
   };
 
-  onRepeatPasswordChange = repeatPassword => {
+  onRepeatPasswordChange = (repeatPassword: string) => {
     this.setState({
-      repeatPasswordInputValue: repeatPassword
+      repeatPasswordInputValue: repeatPassword,
     });
   };
 
-  onNameChange = name => {
+  onNameChange = (name: string) => {
     this.setState({
-      nameInputValue: name
+      nameInputValue: name,
     });
   };
 
-  onSurnameChange = surname => {
+  onSurnameChange = (surname: string) => {
     this.setState({
-      surnameInputValue: surname
+      surnameInputValue: surname,
     });
   };
 
@@ -149,21 +154,17 @@ class RegisterScreen extends React.Component<Props, void> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    // userId: state.auth.userId,
     userToken: state.auth.userToken,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
-    onRegister: authData => dispatch(doSignUp(authData))
+    onRegister: (authData: RegistrationData) => dispatch(doSignUp(authData)),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RegisterScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterScreen);

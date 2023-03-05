@@ -1,15 +1,13 @@
 import React from "react";
-import R from "ramda";
 import {
-  StyleSheet,
   VirtualizedList,
-  ScrollView,
   View,
   Text,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { connect } from "react-redux";
+import { NavigationProp } from "@react-navigation/native";
 
 import AddHeaderButton from "../../components/AddHeaderButton";
 import FilterHeaderButton from "../../components/FilterHeaderButton";
@@ -18,9 +16,38 @@ import OrderRow from "../../components/OrderRow";
 
 import styles from "./styles";
 import { downloadAllOrders, downloadAllUsers } from "../../store/actions";
+import { ThunkDispatch } from "redux-thunk";
 
-class AllDeliveries extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
+type Order = {
+  _id: string;
+  primaryStreet: string;
+  destinationStreet: string;
+  orderSize: string;
+  creationDate: string;
+  orderWeight: number;
+  navigation: NavigationProp<any, any>;
+  createdAt: string;
+  packageWeight: number;
+  packageSize: string;
+};
+
+type Props = {
+  downloadAllOrders: () => void;
+  downloadAllUsers: () => void;
+  ordersDataById: Array<Order>;
+  useFilter: boolean;
+  ordersIds: string[];
+  navigation: NavigationProp<any, any>;
+};
+
+type State = { refreshingAfterPull: boolean };
+
+class AllDeliveries extends React.Component<Props, State> {
+  static navigationOptions = ({
+    navigation,
+  }: {
+    navigation: NavigationProp<any, any>;
+  }) => ({
     title: "Список доставок",
     headerBackTitle: "Назад",
     headerRight: (
@@ -30,19 +57,17 @@ class AllDeliveries extends React.Component {
       <FilterHeaderButton
         onPress={() => navigation.navigate("FilterAllDeliveries")}
       />
-    )
+    ),
   });
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    let state = {};
-    if (prevState.refreshingAfterPull) {
-      state = R.merge({ refreshingAfterPull: false }, state);
-    }
-    return state;
+    return prevState.refreshingAfterPull
+      ? Object.assign({}, { refreshingAfterPull: false })
+      : {};
   }
 
   state = {
-    refreshingAfterPull: false
+    refreshingAfterPull: false,
   };
 
   componentDidMount() {
@@ -50,7 +75,7 @@ class AllDeliveries extends React.Component {
     this.props.downloadAllUsers();
   }
 
-  renderItem = ({ item }: { item: Object }) => (
+  renderItem = ({ item }: {item: Order}) => (
     <OrderRow
       key={item._id}
       orderId={item._id}
@@ -63,7 +88,7 @@ class AllDeliveries extends React.Component {
     />
   );
 
-  listItemKeyExtractor = (item: Object) => item._id;
+  listItemKeyExtractor = (item: Order) => item._id;
 
   getListItemCount = (): number => {
     if (this.props.ordersIds.length > 0) {
@@ -72,9 +97,9 @@ class AllDeliveries extends React.Component {
     return 0;
   };
 
-  getListItem = (data: string[], index: number): Object => {
+  getListItem = (data: Array<number>, index: number) => {
     if (index < data.length) {
-      const id = data[index];
+      const id: number = data[index];
       return this.props.ordersDataById[id];
     }
     return { listItemType: "activity-indicator", id: "activity-indicator" };
@@ -128,22 +153,19 @@ class AllDeliveries extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ordersIds: state.order.ordersIds || [],
     ordersDataById: state.order.ordersDataById || {},
-    useFilter: state.order.filter.useFilter || false
+    useFilter: state.order.filter.useFilter || false,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
     downloadAllOrders: () => dispatch(downloadAllOrders()),
-    downloadAllUsers: () => dispatch(downloadAllUsers())
+    downloadAllUsers: () => dispatch(downloadAllUsers()),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AllDeliveries);
+export default connect(mapStateToProps, mapDispatchToProps)(AllDeliveries);

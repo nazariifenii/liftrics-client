@@ -6,7 +6,7 @@ import { Colors, Fonts } from "../constants";
 type Props = {
   title: string;
   subtitle: string;
-  onPress: () => void;
+  onPress?: () => void;
 };
 
 const ListItemRow: React.FC<Props> = ({ title, subtitle, onPress }) => {

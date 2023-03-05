@@ -4,12 +4,20 @@ import { Avatar, Rating } from "react-native-elements";
 
 import { Colors, Fonts } from "../../constants";
 
-const UserProfileHeader = ({
+type Props = {
+  lastName: string;
+  firstName: string;
+  rating: number;
+  imageUrl: string;
+  onImageEditPress: () => void;
+};
+
+const UserProfileHeader: React.FC<Props> = ({
   lastName = "",
   firstName = "",
   rating = 0,
   imageUrl,
-  onImageEditPress
+  onImageEditPress,
 }) => {
   const avatarImageProps = imageUrl
     ? { source: { uri: imageUrl } }
@@ -20,10 +28,11 @@ const UserProfileHeader = ({
       <Avatar
         rounded
         {...avatarImageProps}
-        showEditButton
         size="large"
         onPress={onImageEditPress}
-      />
+      >
+        <Avatar.Accessory size={20} />
+      </Avatar>
       <View style={styles.titleContainer}>
         <View>
           <Text style={styles.lastNameTitle}>{lastName}</Text>
@@ -43,32 +52,32 @@ const UserProfileHeader = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    margin: 16
+    margin: 16,
   },
   raitingContainer: {
     flexDirection: "row",
-    alignContent: "center"
+    alignContent: "center",
   },
   titleContainer: {
     justifyContent: "space-between",
-    marginLeft: 15
+    marginLeft: 15,
   },
   lastNameTitle: {
     fontSize: 21,
     fontFamily: Fonts.avenir,
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   firstNameTitle: {
     fontSize: 18,
     fontFamily: Fonts.avenir,
-    color: Colors.mainTextColor
+    color: Colors.mainTextColor,
   },
   ratingTitle: {
     fontFamily: Fonts.avenir,
     color: Colors.mainTextColor,
     marginLeft: 5,
-    fontSize: 13
-  }
+    fontSize: 13,
+  },
 });
 
 export default UserProfileHeader;

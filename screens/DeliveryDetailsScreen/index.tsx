@@ -3,6 +3,7 @@ import React from "react";
 import { Text, View, ActivityIndicator, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { Button, ListItem, Avatar, Rating } from "react-native-elements";
+import { NavigationProp } from "@react-navigation/native";
 
 import SectionHeader from "../../components/SectionHeader";
 import ListItemRow from "../../components/ListItemRow";
@@ -15,12 +16,13 @@ import {
   applyToOrder,
   deleteOrder,
   finishOrder,
-  leaveFeedback
+  leaveFeedback,
 } from "../../store/actions";
 
 import styles from "./styles";
 import UserDataRow from "../../components/UserDataRow";
 import ActionSelectModal from "./ActionSelectModal";
+import { ThunkDispatch } from "redux-thunk";
 
 const mapStateToProps = (state, ownProps) => {
   const { params } = ownProps.navigation.state;
@@ -30,30 +32,77 @@ const mapStateToProps = (state, ownProps) => {
     orderData,
     userList,
     authUserId: state.auth.userId,
-    contactData: (orderData.creator && userList[orderData.creator]) || {}
+    contactData: (orderData.creator && userList[orderData.creator]) || {},
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
-    downloadContactById: contactId => dispatch(downloadContactById(contactId)),
-    applyToOrder: orderId => dispatch(applyToOrder(orderId)),
-    deleteOrder: orderId => dispatch(deleteOrder(orderId)),
-    finishOrder: driverId => dispatch(finishOrder(driverId)),
-    leaveFeedback: (userId, orderId, leftRating) =>
-      dispatch(leaveFeedback(userId, orderId, leftRating))
+    downloadContactById: (contactId: string) =>
+      dispatch(downloadContactById(contactId)),
+    applyToOrder: (orderId: string) => dispatch(applyToOrder(orderId)),
+    deleteOrder: (orderId: string) => dispatch(deleteOrder(orderId)),
+    finishOrder: (driverId: string) => dispatch(finishOrder(driverId)),
+    leaveFeedback: (userId: string, orderId: string, leftRating: number) =>
+      dispatch(leaveFeedback(userId, orderId, leftRating)),
   };
 };
 
-class DeliveryDetailsScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+type OrderData = {
+  _id: string;
+  applicantslist: Array<string>;
+  creator: string;
+  status: string;
+  driverId: string;
+  suggestedPrice: number;
+  destinationStreet: string;
+  primaryStreet: string;
+  createdAt: string;
+  packageWeight: number;
+  imageUrl: string;
+  packageSize: string;
+};
+
+type Props = {
+  authUserId: string;
+  orderData: OrderData;
+  navigation: NavigationProp<any, never, any>;
+  userList: Record<number, Object>;
+  router: any;
+  contactData: User;
+  downloadContactById: (contactId: string) => void;
+  applyToOrder: (orderId: string) => void;
+  deleteOrder: (orderId: string) => void;
+  finishOrder: (orderId: string) => void;
+  leaveFeedback: (userId: string, orderId: string, leftRating: number) => void;
+};
+
+type State = {
+  destinationAdress: string;
+  proposedPrice: number;
+  actionModaVisible: boolean;
+  rating: number | null;
+};
+
+type User = {
+  firstName: string;
+  imageUrl: string;
+  userTotalRating: number;
+};
+
+class DeliveryDetailsScreen extends React.Component<Props, State> {
+  static navigationOptions = ({
+    navigation,
+  }: {
+    navigation: NavigationProp<any, never, any>;
+  }) => {
     const { params = {} } = navigation.state;
     return {
       headerBackTitle: "Назад",
       title: "Деталі замовлення",
       headerRight: params.showOptionsButton && (
         <OptionsHeaderButton onPress={params.showActionModal} />
-      )
+      ),
     };
   };
 
@@ -61,18 +110,18 @@ class DeliveryDetailsScreen extends React.Component {
     this.props.downloadContactById(this.props.orderData.creator);
     this.props.navigation.setParams({
       showActionModal: this.showActionModal,
-      showOptionsButton: this.props.orderData.creator === this.props.authUserId
+      showOptionsButton: this.props.orderData.creator === this.props.authUserId,
     });
   }
 
-  state = {
+  state: State = {
     proposedPrice: this.props.orderData.suggestedPrice || 0,
     actionModaVisible: false,
-    rating: null
+    rating: null,
   };
 
   onSubmitPress = () => {
-    const { params } = this.props.navigation.state;
+    const { params } = this.props.router;
     this.props.applyToOrder(params.orderId);
   };
 
@@ -81,43 +130,39 @@ class DeliveryDetailsScreen extends React.Component {
       onPress: this.onProposedPriceSelected,
       labelTitle: "Змініть пропоновану вартість доставки",
       screenTitle: "Зміна ціни",
-      inputData: this.state.proposedPrice
+      inputData: this.state.proposedPrice,
     });
   };
 
-  onProposedPriceSelected = price => {
+  onProposedPriceSelected = (price: number) => {
     this.setState({
-      proposedPrice: price
+      proposedPrice: price,
     });
   };
 
   onApplicantsListPress = () => {
-    const idsArray = this.props.orderData.applicantslist;
+    const idsArray: string[] = this.props.orderData.applicantslist;
     if (idsArray.length) {
       this.props.navigation.navigate("ApplicantsList", {
         applicantsIds: idsArray,
-        orderId: this.props.orderData._id
+        orderId: this.props.orderData._id,
       });
     }
   };
 
   onEndAdressPress = () => {
     this.props.navigation.navigate("InputData", {
-      onPress: this.onDestinationAdressSelected,
       labelTitle: "Введіть кінцеву адресу",
       screenTitle: "Кінцева адреса",
-      inputData: this.state.destinationAdress
+      inputData: this.state.destinationAdress,
     });
   };
 
-  renderDriverRow = driverData => {
+  renderDriverRow = (driverData: User) => {
     if (driverData) {
       return (
         <View style={styles.driverRow}>
-          <SectionHeader
-            title="Інформація про водія:"
-            containerStyle={styles.sectionHeaderStyle}
-          />
+          <SectionHeader title="Інформація про водія:" />
           <UserDataRow
             userName={driverData.firstName}
             imageUrl={driverData.imageUrl}
@@ -128,7 +173,7 @@ class DeliveryDetailsScreen extends React.Component {
     } else return null;
   };
 
-  onActionPress = actionType => {
+  onActionPress = (actionType: "edit" | "delete") => {
     if (actionType === "edit") {
     } else if (actionType === "delete") {
       const { orderData } = this.props;
@@ -145,19 +190,19 @@ class DeliveryDetailsScreen extends React.Component {
 
   showActionModal = () => {
     this.setState({
-      actionModaVisible: true
+      actionModaVisible: true,
     });
   };
 
   hideActionModal = () => {
     this.setState({
-      actionModaVisible: false
+      actionModaVisible: false,
     });
   };
 
-  ratingCompleted = rating => {
+  ratingCompleted = (rating: number) => {
     this.setState({
-      rating
+      rating,
     });
   };
 
@@ -218,17 +263,13 @@ class DeliveryDetailsScreen extends React.Component {
               orderId={orderData._id}
               primaryStreet={orderData.primaryStreet}
               destinationStreet={orderData.destinationStreet}
-              containerStyle={styles.orderRow}
               creationDate={orderData.createdAt}
               orderWeight={orderData.packageWeight}
               orderSize={orderData.packageSize}
             />
           </View>
 
-          <SectionHeader
-            title="Інформація про замовника:"
-            containerStyle={styles.sectionHeaderStyle}
-          />
+          <SectionHeader title="Інформація про замовника:" />
           <UserDataRow
             userName={contactData.firstName}
             imageUrl={contactData.imageUrl}
@@ -244,7 +285,7 @@ class DeliveryDetailsScreen extends React.Component {
                   title="Список заявок на виконання"
                   badge={{
                     value: applicantsCount,
-                    textStyle: { marginHorizontal: 3, fontSize: 15 }
+                    textStyle: { marginHorizontal: 3, fontSize: 15 },
                   }}
                   onPress={this.onApplicantsListPress}
                   chevron
@@ -268,7 +309,6 @@ class DeliveryDetailsScreen extends React.Component {
                 <ListItemRow
                   title="Запропонована ціна"
                   subtitle={this.state.proposedPrice + " ₴"}
-                  // onPress={this.onProposedPricePress}
                 />
                 <Button
                   title="Залишити заявку"
@@ -297,7 +337,6 @@ class DeliveryDetailsScreen extends React.Component {
           isVisible={this.state.actionModaVisible}
           onClose={this.hideActionModal}
           onOptionPress={this.onActionPress}
-          // data={Config.contacts.organization.moreFeaturesList}
         />
       </ScrollView>
     );

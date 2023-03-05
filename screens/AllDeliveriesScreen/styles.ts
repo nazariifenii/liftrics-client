@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Colors, Fonts } from "../../constants";
+import { Colors } from "../../constants";
 
 export default StyleSheet.create({
   clearFilterContainer: {

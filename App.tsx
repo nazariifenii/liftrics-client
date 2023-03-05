@@ -1,12 +1,9 @@
 import React from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
-import { Store } from "redux";
 
 import AppNavigator from "./navigation/AppNavigator";
-import configureStore from "./store/configureStore";
-
-const store: Store = configureStore();
+import store from "./store/store";
 
 export default function App(): JSX.Element {
   return (

@@ -1,26 +1,29 @@
-// @flow
-
 import React from "react";
 import { connect } from "react-redux";
-import Icon from "react-native-vector-icons/FontAwesome";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator
-} from "react-native";
+import { View, Text } from "react-native";
 import { Button, Input } from "react-native-elements";
+import { NavigationProp } from "@react-navigation/native";
+import { ThunkDispatch } from "redux-thunk";
 
 import { tryAuth } from "../../store/actions";
 import styles from "./styles";
 
-type Props = {};
+type Auth = {
+  phone: string;
+  password: string;
+};
 
-class LoginScreen extends React.Component<Props, void> {
+type Props = {
+  userToken: string;
+  navigation: NavigationProp<any, never, any>;
+  isLoading: boolean;
+  onLogin: (authData: Auth) => void;
+};
+
+class LoginScreen extends React.Component<Props> {
   state = {
     phoneInputValue: "",
-    passwordInputValue: ""
+    passwordInputValue: "",
   };
 
   componentDidUpdate() {
@@ -32,20 +35,20 @@ class LoginScreen extends React.Component<Props, void> {
   onLoginPress = () => {
     const authData = {
       phone: `+${this.state.phoneInputValue}`,
-      password: this.state.passwordInputValue
+      password: this.state.passwordInputValue,
     };
     this.props.onLogin(authData);
   };
 
-  onPhoneChange = phone => {
+  onPhoneChange = (phone: string) => {
     this.setState({
-      phoneInputValue: phone
+      phoneInputValue: phone,
     });
   };
 
-  onPasswordChange = password => {
+  onPasswordChange = (password: string) => {
     this.setState({
-      passwordInputValue: password
+      passwordInputValue: password,
     });
   };
 
@@ -93,21 +96,17 @@ class LoginScreen extends React.Component<Props, void> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    // userId: state.auth.userId,
     userToken: state.auth.userToken,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
-    onLogin: authData => dispatch(tryAuth(authData))
+    onLogin: (authData: Auth) => dispatch(tryAuth(authData)),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

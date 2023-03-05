@@ -1,7 +1,4 @@
 import { StyleSheet } from "react-native";
-import { Colors, Fonts, Layout } from "../../constants";
-
-const paddingBorder = 16;
 
 const styles = StyleSheet.create({
   sectionHeaderStyle: {

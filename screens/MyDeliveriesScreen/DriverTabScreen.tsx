@@ -1,19 +1,39 @@
 import React from "react";
-import { Text, ActivityIndicator, VirtualizedList } from "react-native";
+import { VirtualizedList } from "react-native";
 import { connect } from "react-redux";
+import { NavigationProp } from "@react-navigation/native";
 
 import OrderRow from "../../components/OrderRow";
 
 const mapStateToProps = (state, ownProps) => {
   return {
     ordersIds: state.order.myOrdersIdsByKey[ownProps.pageKey] || [],
-    ordersData: state.order.ordersDataById || {}
+    ordersData: state.order.ordersDataById || {},
   };
 };
 
-class DriverTabScreen extends React.Component<Props, void> {
+type Order = {
+  _id: string;
+  primaryStreet: string;
+  destinationStreet: string;
+  orderSize: string;
+  creationDate: string;
+  orderWeight: number;
+  navigation: NavigationProp<any, any>;
+  createdAt: string;
+  packageWeight: number;
+  packageSize: string;
+};
+
+type Props = {
+  ordersIds: string[];
+  navigation: NavigationProp<any, any>;
+  ordersData: Array<Order>;
+};
+
+class DriverTabScreen extends React.Component<Props> {
   static navigationOptions = {
-    title: "Мої доставки"
+    title: "Мої доставки",
   };
 
   getListItemCount = (): number => {
@@ -23,9 +43,9 @@ class DriverTabScreen extends React.Component<Props, void> {
     return 0;
   };
 
-  listItemKeyExtractor = (item: Object) => item._id;
+  listItemKeyExtractor = (item: Order) => item._id;
 
-  renderItem = ({ item }: { item: Object }) => (
+  renderItem = ({ item }: { item: Order }) => (
     <OrderRow
       key={item._id}
       orderId={item._id}
@@ -38,9 +58,9 @@ class DriverTabScreen extends React.Component<Props, void> {
     />
   );
 
-  getListItem = (data: string[], index: number): Object => {
+  getListItem = (data: number[], index: number): Object => {
     if (index < data.length) {
-      const id = data[index];
+      const id: number = data[index];
       return this.props.ordersData[id];
     }
     return { listItemType: "activity-indicator", id: "activity-indicator" };
@@ -56,12 +76,6 @@ class DriverTabScreen extends React.Component<Props, void> {
         getItem={this.getListItem}
         renderItem={this.renderItem}
         keyExtractor={this.listItemKeyExtractor}
-        // ListEmptyComponent={ActivityIndicator}
-        // ItemSeparatorComponent={ListItemSeparator}
-        // onEndReached={this.onListEndReached}
-        // onEndReachedThreshold={0.25}
-        // onRefresh={this.onListRefresh}
-        // refreshing={refreshingAfterPull}
       />
     );
   }

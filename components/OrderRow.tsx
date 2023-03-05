@@ -8,8 +8,8 @@ type Props = {
   orderId: string;
   primaryStreet: string;
   destinationStreet: string;
-  primaryCity: string;
-  detimationCity: string;
+  primaryCity?: string;
+  detimationCity?: string;
   orderSize: string;
   creationDate: string;
   orderWeight: number;

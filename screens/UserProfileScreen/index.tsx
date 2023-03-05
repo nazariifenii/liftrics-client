@@ -1,15 +1,11 @@
 import React from "react";
 import R from "ramda";
-import { ImagePicker, Permissions } from "expo";
+import * as ImagePicker from "expo-image-picker";
 import { Button } from "react-native-elements";
-import {
-  Text,
-  View,
-  ScrollView,
-  Linking,
-  ActivityIndicator
-} from "react-native";
+import { View, ScrollView, Linking, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { NavigationProp } from "@react-navigation/native";
 
 import UserProfileHeader from "./UserProfileHeader";
 import SectionHeader from "../../components/SectionHeader";
@@ -19,33 +15,53 @@ import styles from "./styles";
 import {
   logout,
   downloadContactById,
-  saveUserImage
+  saveUserImage,
 } from "../../store/actions";
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const userId = state.auth.userId;
   return {
     userId,
     userToken: state.auth.userToken || "",
-    contactData: (userId && state.users.userList[userId]) || {}
+    contactData: (userId && state.users.userList[userId]) || {},
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
     logout: () => dispatch(logout()),
-    downloadContactById: contactId => dispatch(downloadContactById(contactId)),
-    saveUserImage: imageUri => dispatch(saveUserImage(imageUri))
+    downloadContactById: (contactId: string) =>
+      dispatch(downloadContactById(contactId)),
+    saveUserImage: (imageUri: string) => dispatch(saveUserImage(imageUri)),
   };
 };
 
-class UserProfileScreen extends React.Component {
+type Contact = {
+  phoneNumber: string;
+  email: string;
+  imageUrl: string;
+  firstName: string;
+  lastName: string;
+  userTotalRating: number;
+};
+
+type Props = {
+  userId: string;
+  userToken: string;
+  navigation: NavigationProp<any, any>;
+  contactData: Contact;
+  downloadContactById: (userId: string) => void;
+  logout: () => void;
+  saveUserImage: (uri: string) => void;
+};
+
+class UserProfileScreen extends React.Component<Props> {
   static navigationOptions = {
-    title: "Профіль користувача"
+    title: "Профіль користувача",
   };
 
   state = {
-    image: null
+    image: null,
   };
 
   componentDidMount() {
@@ -59,13 +75,13 @@ class UserProfileScreen extends React.Component {
     }
   }
 
-  onOpenUrl = url => {
-    if (url && Linking.canOpenURL(url)) {
+  onOpenUrl = (url: string) => {
+    if (url) {
       Linking.openURL(url);
     }
   };
 
-  renderMainInformationSection = (contactData: Object) => {
+  renderMainInformationSection = (contactData: Contact) => {
     return (
       <View>
         <SectionHeader
@@ -118,10 +134,11 @@ class UserProfileScreen extends React.Component {
   };
 
   _pickImage = async () => {
-    const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
-    if (permission.status !== "granted") {
-      const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (newPermission.status === "granted") {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      const { status: newStatus } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (newStatus === "granted") {
         this.openImageLibrary();
       }
     } else {
@@ -130,9 +147,11 @@ class UserProfileScreen extends React.Component {
   };
 
   openImageLibrary = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result: any = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.cancelled) {
@@ -150,7 +169,6 @@ class UserProfileScreen extends React.Component {
   };
 
   render() {
-    let { image } = this.state;
     const { contactData } = this.props;
     if (!R.isEmpty(contactData)) {
       this.renderEmptyScreen();
@@ -176,7 +194,4 @@ class UserProfileScreen extends React.Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UserProfileScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfileScreen);

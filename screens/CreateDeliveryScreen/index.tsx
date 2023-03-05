@@ -1,8 +1,8 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-elements";
 import { connect } from "react-redux";
-import { ImagePicker, Permissions } from "expo";
+import * as ImagePicker from "expo-image-picker";
 
 import SectionHeader from "../../components/SectionHeader";
 import ListItemRow from "../../components/ListItemRow";
@@ -12,9 +12,10 @@ import { createOrder } from "../../store/actions";
 
 import styles from "./styles";
 
+// TODO: Add typesctipt 
 class CreateDeliveryScreen extends React.Component {
   static navigationOptions = {
-    title: "Додати замовлення"
+    title: "Додати замовлення",
   };
 
   state = {
@@ -23,7 +24,7 @@ class CreateDeliveryScreen extends React.Component {
     proposedPrice: "",
     image: "",
     selectedWeightId: null,
-    selectedSizeId: null
+    selectedSizeId: null,
   };
 
   static getWeightIcons(title) {
@@ -45,7 +46,7 @@ class CreateDeliveryScreen extends React.Component {
     1: { id: 1, title: "Пакет" },
     2: { id: 2, title: "Рюкзак" },
     3: { id: 3, title: "Легкове авто" },
-    4: { id: 4, title: "Вантажне авто" }
+    4: { id: 4, title: "Вантажне авто" },
   };
 
   static weightsArray = {
@@ -53,7 +54,7 @@ class CreateDeliveryScreen extends React.Component {
     2: { id: 2, title: "До 5" },
     3: { id: 3, title: "До 10" },
     4: { id: 4, title: "До 30" },
-    5: { id: 4, title: "Понад 30" }
+    5: { id: 4, title: "Понад 30" },
   };
 
   onStartAdressPress = () => {
@@ -61,7 +62,7 @@ class CreateDeliveryScreen extends React.Component {
       onPress: this.onStartAdressSelected,
       labelTitle: "Введіть початкову адресу",
       screenTitle: "Початкова адреса",
-      inputData: this.state.startAdress
+      inputData: this.state.startAdress,
     });
   };
 
@@ -70,7 +71,7 @@ class CreateDeliveryScreen extends React.Component {
       onPress: this.onDestinationAdressSelected,
       labelTitle: "Введіть кінцеву адресу",
       screenTitle: "Кінцева адреса",
-      inputData: this.state.destinationAdress
+      inputData: this.state.destinationAdress,
     });
   };
 
@@ -79,33 +80,34 @@ class CreateDeliveryScreen extends React.Component {
       onPress: this.onProposedPriceSelected,
       labelTitle: "Введіть пропоновану вартість доставки",
       screenTitle: "Ціна доставки",
-      inputData: this.state.proposedPrice
+      inputData: this.state.proposedPrice,
     });
   };
 
-  onProposedPriceSelected = price => {
+  onProposedPriceSelected = (price) => {
     this.setState({
-      proposedPrice: price
+      proposedPrice: price,
     });
   };
 
-  onStartAdressSelected = address => {
+  onStartAdressSelected = (address) => {
     this.setState({
-      startAdress: address
+      startAdress: address,
     });
   };
 
-  onDestinationAdressSelected = address => {
+  onDestinationAdressSelected = (address) => {
     this.setState({
-      destinationAdress: address
+      destinationAdress: address,
     });
   };
 
   _pickImage = async () => {
-    const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
-    if (permission.status !== "granted") {
-      const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (newPermission.status === "granted") {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      const { status: newStatus } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (newStatus === "granted") {
         this.openImageLibrary();
       }
     } else {
@@ -114,13 +116,14 @@ class CreateDeliveryScreen extends React.Component {
   };
 
   openImageLibrary = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result: any = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.cancelled) {
-      // this.props.saveUserImage(result.uri);
       this.setState({ image: result.uri });
     }
   };
@@ -135,7 +138,7 @@ class CreateDeliveryScreen extends React.Component {
       destinationCity: "м. Львів",
       packageSize: sizesArray[selectedSizeId].title,
       packageWeight: weightsArray[selectedWeightId].title,
-      image
+      image,
     };
     this.props.createOrder(orderData);
     this.props.navigation.goBack();
@@ -151,7 +154,7 @@ class CreateDeliveryScreen extends React.Component {
           containerStyle={styles.deliverySizeHeader}
         />
         <View style={styles.sizeList}>
-          {Object.keys(sizesArray).map(sizeId => {
+          {Object.keys(sizesArray).map((sizeId) => {
             const item = sizesArray[sizeId];
             return (
               <ListItemHorizontal
@@ -169,15 +172,15 @@ class CreateDeliveryScreen extends React.Component {
     );
   };
 
-  onWeightSelect = id => {
+  onWeightSelect = (id) => {
     this.setState({
-      selectedWeightId: id
+      selectedWeightId: id,
     });
   };
 
-  onSizeSelect = id => {
+  onSizeSelect = (id) => {
     this.setState({
-      selectedSizeId: id
+      selectedSizeId: id,
     });
   };
 
@@ -191,7 +194,7 @@ class CreateDeliveryScreen extends React.Component {
           containerStyle={styles.deliveryWeightHeader}
         />
         <View style={styles.sizeList}>
-          {Object.keys(weightsArray).map(weightId => (
+          {Object.keys(weightsArray).map((weightId) => (
             <ListItemHorizontal
               id={weightId}
               key={weightId}
@@ -258,13 +261,10 @@ class CreateDeliveryScreen extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    createOrder: data => dispatch(createOrder(data))
+    createOrder: (data) => dispatch(createOrder(data)),
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(CreateDeliveryScreen);
+export default connect(null, mapDispatchToProps)(CreateDeliveryScreen);

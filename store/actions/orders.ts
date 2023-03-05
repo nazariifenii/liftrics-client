@@ -7,6 +7,12 @@ import {
 } from "./actionTypes";
 import R from "ramda";
 import { createChat } from "./index";
+import { AppDispatch, RootState } from "store/store";
+
+export type DownloadOrderData = {
+  packageWeight: string[];
+  packageSize: string[];
+};
 
 export const saveOrder = data => {
   return {
@@ -127,31 +133,29 @@ export const uploadOrderImage = (imageUrl, orderId) => {
       .then(res => {
         return res.json();
       })
-      .then(parsedRes => {
-        // console.log(parsedRes);
-      })
       .catch(err => {
         console.warn("SAVE ORDER IMAGE ERROR", err);
       });
   };
 };
 
-export const downloadAllOrders = filterOptions => {
+export const downloadAllOrders = (filterOptions?: DownloadOrderData) => {
   let url = "https://liftrics.herokuapp.com/orders";
-  for (const optionName in filterOptions) {
-    if (filterOptions.hasOwnProperty(optionName)) {
-      const element = filterOptions[optionName];
-      if (!R.isEmpty(element)) {
-        const startSign = url.split("?")[1] ? "&" : "?";
-        url +=
-          startSign +
-          optionName +
-          "=" +
-          encodeURIComponent(JSON.stringify(element));
+  if (filterOptions) {
+    for (const [optionName, element] of Object.entries(filterOptions)) { // Add filter options to url params
+      if (filterOptions.hasOwnProperty(optionName)) {
+        if (!R.isEmpty(element)) {
+          const startSign = url.split("?")[1] ? "&" : "?";
+          url +=
+            startSign +
+            optionName +
+            "=" +
+            encodeURIComponent(JSON.stringify(element));
+        }
       }
     }
   }
-  return (dispatch, getState) => {
+  return (dispatch: AppDispatch, getState: RootState) => {
     const token = getState().auth.userToken;
     fetch(url, {
       method: "GET",

@@ -1,64 +1,79 @@
 import React from "react";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { NavigationProp } from "@react-navigation/native";
+import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import CheckBoxItem from "../../components/CheckBoxItem";
-import { Colors, Fonts } from "../../constants";
-import { Button } from "react-native-elements";
+import { Colors } from "../../constants";
 import { downloadAllOrders } from "../../store/actions";
+import { DownloadOrderData } from "../../store/actions/orders";
+import { ThunkDispatch } from "redux-thunk";
+type SizesArray = Record<number, { id: number; title: string }>;
+type WeightsArray = Record<number, { id: number; title: string }>;
 
-class FilterAllDeliveriesScreen extends React.Component {
+type Props = {
+  navigation: NavigationProp<any, any>;
+  downloadAllOrders: (orderData: DownloadOrderData) => void;
+};
+
+type State = {
+  selectedSizes: string[];
+  selectedWeights: string[];
+};
+
+class FilterAllDeliveriesScreen extends React.Component<Props, State> {
   static navigationOptions = {
-    title: "Фільтр доставок"
+    title: "Фільтр доставок",
   };
 
-  static sizesArray = {
+  static sizesArray: SizesArray = {
     1: { id: 1, title: "Пакет" },
     2: { id: 2, title: "Рюкзак" },
     3: { id: 3, title: "Легкове авто" },
-    4: { id: 4, title: "Вантажне авто" }
+    4: { id: 4, title: "Вантажне авто" },
   };
 
-  static weightsArray = {
+  static weightsArray: WeightsArray = {
     1: { id: 1, title: "До 1" },
     2: { id: 2, title: "До 5" },
     3: { id: 3, title: "До 10" },
     4: { id: 4, title: "До 30" },
-    5: { id: 4, title: "Понад 30" }
+    5: { id: 4, title: "Понад 30" },
   };
 
-  state = {
+  state: State = {
     selectedSizes: [],
-    selectedWeights: []
+    selectedWeights: [],
   };
 
-  onSizePress = value => {
+  onSizePress = (value: string) => {
     const { selectedSizes } = this.state;
     if (selectedSizes.includes(value)) {
       const filteredSelectedSizes = selectedSizes.filter(
-        title => title !== value
+        (title) => title !== value
       );
       this.setState({
-        selectedSizes: filteredSelectedSizes
+        selectedSizes: filteredSelectedSizes,
       });
     } else {
       this.setState({
-        selectedSizes: [...selectedSizes, value]
+        selectedSizes: [...selectedSizes, value],
       });
     }
   };
 
-  onWeightPress = value => {
+  onWeightPress = (value: string) => {
     const { selectedWeights } = this.state;
     if (selectedWeights.includes(value)) {
       const filteredSelectedWeights = selectedWeights.filter(
-        title => title !== value
+        (title) => title !== value
       );
       this.setState({
-        selectedWeights: filteredSelectedWeights
+        selectedWeights: filteredSelectedWeights,
       });
     } else {
       this.setState({
-        selectedWeights: [...selectedWeights, value]
+        selectedWeights: [...selectedWeights, value],
       });
     }
   };
@@ -67,7 +82,7 @@ class FilterAllDeliveriesScreen extends React.Component {
     const { selectedWeights, selectedSizes } = this.state;
     this.props.downloadAllOrders({
       packageWeight: selectedWeights,
-      packageSize: selectedSizes
+      packageSize: selectedSizes,
     });
     this.props.navigation.goBack();
   };
@@ -80,11 +95,10 @@ class FilterAllDeliveriesScreen extends React.Component {
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.headerText}>Орієнтована вага:</Text>
-          {Object.keys(weightsArray).map(id => {
-            const title = weightsArray[id].title;
+          {Object.entries(weightsArray).map(([id, { title }]): JSX.Element => {
             return (
               <CheckBoxItem
-                key={title}
+                key={id}
                 title={title}
                 checked={selectedWeights.includes(title)}
                 onPress={this.onWeightPress}
@@ -94,11 +108,10 @@ class FilterAllDeliveriesScreen extends React.Component {
           <Text style={[styles.headerText, styles.sizeFilterSection]}>
             Має поміститися у:
           </Text>
-          {Object.keys(sizesArray).map(id => {
-            const title = sizesArray[id].title;
+          {Object.entries(sizesArray).map(([id, { title }]): JSX.Element => {
             return (
               <CheckBoxItem
-                key={title}
+                key={id}
                 title={title}
                 checked={selectedSizes.includes(title)}
                 onPress={this.onSizePress}
@@ -116,36 +129,27 @@ class FilterAllDeliveriesScreen extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, never, any>) => {
   return {
-    // userToken: state.auth.userToken
+    downloadAllOrders: (filterOptions: DownloadOrderData) =>
+      dispatch(downloadAllOrders(filterOptions)),
   };
 };
-
-const mapDispatchToProps = dispatch => {
-  return {
-    downloadAllOrders: filterOptions =>
-      dispatch(downloadAllOrders(filterOptions))
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FilterAllDeliveriesScreen);
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16
+    margin: 16,
   },
   headerText: {
     color: Colors.mainTextColor,
-    fontSize: 17
+    fontSize: 17,
   },
   sizeFilterSection: {
-    marginTop: 10
+    marginTop: 10,
   },
   applyButton: {
-    marginTop: 14
-  }
+    marginTop: 14,
+  },
 });
+
+export default connect(null, mapDispatchToProps)(FilterAllDeliveriesScreen);
